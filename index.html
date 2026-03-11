@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ann store.id</title>
+  <style>
+    :root{
+      --bg:#151313;
+      --bg-2:#1f1a19;
+      --bg-3:#2f2622;
+      --panel:rgba(37,30,27,.92);
+      --panel-2:rgba(50,40,36,.95);
+      --card:rgba(73,58,51,.96);
+      --card-2:rgba(54,43,38,.98);
+      --line:rgba(255,255,255,.08);
+      --line-soft:rgba(255,255,255,.05);
+      --text:#fff8f3;
+      --muted:#dbcabb;
+      --subtle:#b89d89;
+      --gold:#efc69d;
+      --accent:#c1906d;
+      --accent-dark:#7b5b49;
+      --wa:#25d366;
+      --shadow:0 16px 36px rgba(0,0,0,.30);
+      --glow:0 0 0 1px rgba(255,255,255,.03), 0 18px 40px rgba(0,0,0,.34);
+      --radius-xl:28px;
+      --radius-lg:22px;
+      --radius-md:16px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(193,144,109,.18), transparent 25%),
+        radial-gradient(circle at top right, rgba(239,198,157,.08), transparent 18%),
+        linear-gradient(135deg, #100f0f 0%, #1b1817 35%, #2c2421 70%, #120f0f 100%);
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(255,255,255,.02) 0 2px, transparent 3px),
+        radial-gradient(circle at 80% 26%, rgba(255,255,255,.018) 0 2px, transparent 3px),
+        radial-gradient(circle at 35% 70%, rgba(255,255,255,.018) 0 2px, transparent 3px);
+      background-size:180px 180px;
+      opacity:.55;
+    }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:100;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:16px 20px;
+      background:linear-gradient(135deg, rgba(31,25,24,.94), rgba(57,43,36,.92));
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--line);
+      box-shadow:0 10px 24px rgba(0,0,0,.22);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width:0;
+    }
+
+    .logo-store{
+      width:56px;
+      height:56px;
+      border-radius:20px;
+      background:linear-gradient(135deg,#d9b08d,#7a5b49 72%);
+      display:grid;
+      place-items:center;
+      font-size:26px;
+      box-shadow:var(--shadow);
+      flex-shrink:0;
+      border:1px solid rgba(255,255,255,.08);
+      user-select:none;
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:clamp(24px, 4vw, 34px);
+      line-height:1;
+      letter-spacing:-.8px;
+    }
+
+    .brand p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .top-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(103,78,64,.95), rgba(51,39,34,.95));
+      color:var(--text);
+      padding:11px 16px;
+      border-radius:999px;
+      font-weight:800;
+      box-shadow:var(--glow);
+      font-size:13px;
+      white-space:nowrap;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:18px;
+      padding:18px;
+      align-items:start;
+    }
+
+    .sidebar{
+      position:sticky;
+      top:92px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .panel,.welcome,.category-card,.rules,.tnc,.search-wrap{
+      backdrop-filter:blur(10px);
+      border:1px solid var(--line);
+      box-shadow:var(--glow);
+    }
+
+    .panel,.welcome,.category-card,.search-wrap{
+      background:var(--panel);
+      border-radius:var(--radius-xl);
+      overflow:hidden;
+    }
+
+    .panel-header{
+      padding:15px 17px;
+      font-size:15px;
+      font-weight:900;
+      color:var(--gold);
+      border-bottom:1px solid var(--line-soft);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    }
+
+    .panel-body{
+      padding:16px 18px;
+      line-height:1.7;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .panel-body a{
+      color:var(--text);
+      text-decoration:none;
+      word-break:break-word;
+      display:inline-block;
+      margin-top:8px;
+      padding:10px 12px;
+      background:rgba(255,255,255,.04);
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.05);
+    }
+
+    .payment-box{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .qris-frame{
+      padding:12px;
+      background:linear-gradient(180deg, rgba(117,83,61,.9), rgba(54,38,31,.95));
+      border-radius:22px;
+      border:2px solid rgba(239,198,157,.35);
+      overflow:hidden;
+      box-shadow:0 18px 30px rgba(0,0,0,.28);
+    }
+
+    .qris-frame img{
+      width:100%;
+      display:block;
+      border-radius:16px;
+      object-fit:cover;
+      background:#fff;
+    }
+
+    .small{
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:4px;
+    }
+
+    .cute-note{
+      margin-top:2px;
+      color:var(--text);
+      font-size:13px;
+      line-height:1.6;
+      padding:12px 13px;
+      border-radius:14px;
+      background:rgba(255,255,255,.035);
+      border:1px solid rgba(255,255,255,.05);
+    }
+
+    .rules,.tnc{
+      background:rgba(24,24,26,.9);
+      border-radius:var(--radius-xl);
+      padding:18px;
+    }
+
+    .rules h3,.tnc h3{
+      margin:0 0 12px;
+      font-size:24px;
+      text-align:center;
+    }
+
+    .rules ul,.tnc ol{
+      margin:0;
+      padding-left:22px;
+      line-height:1.8;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .main-content{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      min-width:0;
+    }
+
+    .welcome{
+      padding:20px;
+      background:
+        radial-gradient(circle at top right, rgba(239,198,157,.08), transparent 20%),
+        linear-gradient(180deg, rgba(62,46,38,.94), rgba(33,27,25,.94));
+    }
+
+    .welcome h2{
+      margin:0 0 8px;
+      font-size:24px;
+    }
+
+    .welcome p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .search-wrap{
+      padding:14px;
+    }
+
+    .search{
+      width:100%;
+      border:none;
+      outline:none;
+      padding:14px 16px;
+      border-radius:16px;
+      background:linear-gradient(180deg, rgba(31,25,23,.95), rgba(46,36,32,.95));
+      color:var(--text);
+      font-size:14px;
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .search::placeholder{
+      color:#c8b3a3;
+    }
+
+    .catalog{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .category-card{
+      padding:10px;
+    }
+
+    .category-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:15px 16px;
+      border-radius:18px;
+      cursor:pointer;
+      user-select:none;
+      background:linear-gradient(180deg, rgba(193,144,109,.18), rgba(123,91,73,.10));
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .category-left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .category-icon{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      font-size:20px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      flex-shrink:0;
+    }
+
+    .category-head h3{
+      margin:0;
+      font-size:18px;
+    }
+
+    .category-head p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .category-head::after{
+      content:"⌄";
+      color:var(--gold);
+      font-size:20px;
+      font-weight:900;
+      transition:transform .25s ease;
+      flex-shrink:0;
+    }
+
+    .category-card.active .category-head::after{
+      transform:rotate(180deg);
+    }
+
+    .category-body{
+      display:grid;
+      grid-template-rows:0fr;
+      transition:grid-template-rows .28s ease, margin-top .28s ease;
+      margin-top:0;
+    }
+
+    .category-card.active .category-body{
+      grid-template-rows:1fr;
+      margin-top:12px;
+    }
+
+    .category-body-inner{
+      overflow:hidden;
+    }
+
+    .apps-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:12px;
+      align-items:start;
+    }
+
+    .app-card{
+      background:linear-gradient(180deg, rgba(79,61,53,.97), rgba(45,36,33,.98));
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:14px;
+      box-shadow:var(--glow);
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      overflow:hidden;
+      align-self:start;
+      height:fit-content;
+    }
+
+    .app-card:hover{
+      transform:translateY(-2px);
+      border-color:rgba(239,198,157,.22);
+      box-shadow:0 18px 34px rgba(0,0,0,.34);
+    }
+
+    .app-card.active{
+      border-color:rgba(239,198,157,.35);
+      box-shadow:0 20px 40px rgba(0,0,0,.42);
+    }
+
+    .app-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .app-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .app-head::after{
+      content:"⌄";
+      font-size:18px;
+      font-weight:900;
+      color:var(--gold);
+      transition:transform .25s ease;
+      flex-shrink:0;
+    }
+
+    .app-card.active .app-head::after{
+      transform:rotate(180deg);
+    }
+
+    .app-logo{
+      width:46px;
+      height:46px;
+      border-radius:15px;
+      background:#fff;
+      border:1px solid rgba(255,255,255,.08);
+      display:grid;
+      place-items:center;
+      flex-shrink:0;
+      overflow:hidden;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    .app-logo img{
+      width:72%;
+      height:72%;
+      object-fit:contain;
+      display:block;
+    }
+
+    .app-logo.fallback{
+      color:#fff;
+      background:linear-gradient(135deg, #8b6b57, #3b302a);
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.4px;
+    }
+
+    .app-title h4{
+      margin:0;
+      font-size:15px;
+      line-height:1.3;
+    }
+
+    .app-title p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .app-body{
+      display:grid;
+      grid-template-rows:0fr;
+      transition:grid-template-rows .28s ease, margin-top .28s ease;
+      margin-top:0;
+    }
+
+    .app-card.active .app-body{
+      grid-template-rows:1fr;
+      margin-top:12px;
+    }
+
+    .app-body-inner{
+      overflow:hidden;
+    }
+
+    .section{
+      margin-top:8px;
+      color:var(--gold);
+      font-weight:800;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.4px;
+    }
+
+    .price-list{
+      margin:6px 0 0;
+      padding:0;
+      list-style:none;
+      color:var(--text);
+      line-height:1.72;
+      font-size:14px;
+    }
+
+    .price-list li{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      padding:5px 0;
+      border-bottom:1px dashed rgba(255,255,255,.05);
+    }
+
+    .price-list li:last-child{
+      border-bottom:none;
+    }
+
+    .note{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      line-height:1.6;
+      padding:10px 11px;
+      border-radius:12px;
+      background:rgba(255,255,255,.035);
+      border:1px solid rgba(255,255,255,.05);
+      white-space:pre-line;
+    }
+
+    .order-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      margin-top:12px;
+      width:100%;
+      text-decoration:none;
+      background:linear-gradient(180deg, #2ad96c, #1fa85a);
+      color:#102718;
+      font-weight:900;
+      padding:12px 14px;
+      border-radius:14px;
+      box-shadow:0 10px 22px rgba(37,211,102,.2);
+      transition:transform .18s ease, box-shadow .18s ease;
+      font-size:14px;
+    }
+
+    .order-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 14px 24px rgba(37,211,102,.24);
+    }
+
+    .footer-space{height:12px}
+
+    .wa-float{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      z-index:200;
+      text-decoration:none;
+      background:linear-gradient(180deg, #2ad96c, #1fa85a);
+      color:#102718;
+      padding:14px 18px;
+      border-radius:999px;
+      font-weight:900;
+      box-shadow:0 16px 28px rgba(0,0,0,.32);
+      border:1px solid rgba(255,255,255,.18);
+    }
+
+    .hidden-by-search{
+      display:none !important;
+    }
+
+    @media (max-width:1100px){
+      .layout{
+        grid-template-columns:1fr;
+      }
+
+      .sidebar{
+        position:static;
+        order:-1;
+      }
+    }
+
+    @media (max-width:768px){
+      .topbar{
+        padding:12px 14px;
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .brand{
+        align-items:flex-start;
+      }
+
+      .brand h1{
+        font-size:24px;
+      }
+
+      .brand p{
+        font-size:12px;
+      }
+
+      .logo-store{
+        width:48px;
+        height:48px;
+        border-radius:16px;
+        font-size:22px;
+      }
+
+      .layout{
+        padding:10px;
+        gap:12px;
+      }
+
+      .welcome,.panel,.rules,.tnc,.category-card,.search-wrap{
+        border-radius:20px;
+      }
+
+      .panel-body,.rules,.tnc,.welcome{
+        padding:15px;
+      }
+
+      .pill{
+        padding:10px 13px;
+        font-size:13px;
+      }
+
+      .apps-grid{
+        grid-template-columns:1fr;
+      }
+
+      .app-card{
+        padding:13px;
+        border-radius:18px;
+      }
+
+      .app-logo{
+        width:40px;
+        height:40px;
+      }
+
+      .app-title h4{
+        font-size:14px;
+      }
+
+      .price-list{
+        font-size:13px;
+      }
+
+      .note{
+        font-size:12px;
+      }
+
+      .order-btn{
+        font-size:13px;
+        padding:11px 12px;
+      }
+
+      .qris-frame{
+        padding:10px;
+        border-radius:18px;
+      }
+
+      .qris-frame img{
+        border-radius:14px;
+      }
+
+      .wa-float{
+        right:12px;
+        bottom:12px;
+        padding:12px 15px;
+        font-size:13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-store">🤎</div>
+      <div>
+        <h1>ann store.id ✨</h1>
+        <p>premium digital catalog untuk streaming, edukasi, AI, editing, dan music 🤎</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <div class="pill">🎀 Cute Store</div>
+      <div class="pill">✨ Premium</div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <section class="panel">
+        <div class="panel-header">📌 contacts</div>
+        <div class="panel-body">
+          <div>whatsapp admin 💬</div>
+          <a href="https://wa.me/6285609876442" target="_blank" rel="noopener noreferrer">klik chat admin ann store.id</a>
+        </div>
+      </section>
+
+      <section class="panel">
+  <div class="panel-header">💳 payments</div>
+  <div class="panel-body">
+    <div class="payment-box">
+      <div class="qris-frame">
+  <img src="./qris.png" alt="QRIS Ann Store ID">
+</div>
+      <div class="small">Qris — a/n ann</div>
+      <div class="cute-note">🤎 scan di sini yaa<br>jangan lupa kirim bukti transfer ✨</div>
+      <div class="small">📝 note :</div>
+      <div class="small">— ss bukti transfer</div>
+      <div class="small">— isi notes aplikasi yang mau diorder beserta durasinya</div>
+      <div class="small">— salah tf = HANGUS &amp; NO REFUND</div>
+    </div>
+  </div>
+</section>
+
+      <section class="rules">
+        <h3>📏 RULES</h3>
+        <ul>
+          <li>garansi &amp; renewal max 2×24 jam</li>
+          <li>no rude customer 🙏</li>
+          <li>wajib menaati rules/snk yang berlaku</li>
+          <li>payment first (menghindari hit &amp; run)</li>
+        </ul>
+      </section>
+
+      <section class="tnc">
+        <h3>📜 TNC</h3>
+        <ol>
+          <li>pembayaran dilakukan diawal</li>
+          <li>harap sertakan bukti payment dengan jelas</li>
+          <li>membeli = setuju (tidak boleh refund kecuali ada kesalahan dari pihak kami)</li>
+          <li>orderan diproses sesuai urutan (minimal 5mnt &amp; max 1 jam)</li>
+          <li>tidak melayani pembeli yang tidak sopan</li>
+          <li>aplikasi yang tidak ada di catalog pricelist bisa ditanyakan dulu yaa ✨</li>
+        </ol>
+      </section>
+    </aside>
+
+    <section class="main-content">
+      <section class="welcome">
+        <h2>halo, welcome to ann store.id 🤎</h2>
+        <p>happy shopping ✨ pilih kategori dulu, lalu tap aplikasi untuk lihat harga.</p>
+      </section>
+
+      <section class="search-wrap">
+        <input id="searchInput" class="search" type="text" placeholder="🔎 cari aplikasi... misal netflix, canva, spotify">
+      </section>
+
+      <section class="catalog" id="catalog"></section>
+      <div class="footer-space"></div>
+    </section>
+  </main>
+
+  <a class="wa-float" href="https://wa.me/6285609876442" target="_blank" rel="noopener noreferrer">💬 Chat Admin</a>
+
+  <script>
+    const WA_NUMBER = "6285609876442";
+    const EXTRA_NOTE = "📎 note : harga bisa jauh lebih murah yaaa, karena harga yang tertera dibuat saat harga naik ✨";
+
+    const logoMap = {
+      "NETFLIX": "https://cdn.simpleicons.org/netflix/E50914",
+      "WETV": "https://dummyimage.com/128x128/00a1d6/ffffff.png&text=WE",
+      "IQIYI": "https://cdn.simpleicons.org/iqiyi/00BE06",
+      "AMAZON PRIME": "https://cdn.simpleicons.org/primevideo/1F2E3D",
+      "VIU": "https://dummyimage.com/128x128/f39c12/ffffff.png&text=VIU",
+      "YOUTUBE": "https://cdn.simpleicons.org/youtube/FF0000",
+      "DISNEY+": "https://cdn.simpleicons.org/disneyplus/113CCF",
+      "BSTATION": "https://dummyimage.com/128x128/f97316/ffffff.png&text=BS",
+      "YOUKU": "https://cdn.simpleicons.org/youku/FE2C55",
+      "HBO MAX": "https://cdn.simpleicons.org/hbomax/5822B4",
+      "IFLIX": "https://dummyimage.com/128x128/ef4444/ffffff.png&text=IF",
+      "MOVIE BOX": "https://dummyimage.com/128x128/3a302b/ffffff.png&text=MB",
+      "VISION+": "https://dummyimage.com/128x128/7a364a/ffffff.png&text=V%2B",
+      "CATCHPLAY+": "https://dummyimage.com/128x128/24593b/ffffff.png&text=CP",
+      "GAGAOOLALA": "https://dummyimage.com/128x128/8b3c7c/ffffff.png&text=GG",
+      "LOKLOK": "https://dummyimage.com/128x128/8c5a14/ffffff.png&text=LK",
+      "VIKI PASS": "https://dummyimage.com/128x128/5a3592/ffffff.png&text=VK",
+      "RCTI+": "https://dummyimage.com/128x128/1f4fa0/ffffff.png&text=R%2B",
+      "CANVA": "https://cdn.simpleicons.org/canva/00C4CC",
+      "ZOOM": "https://cdn.simpleicons.org/zoom/0B5CFF",
+      "GRAMMARLY": "https://cdn.simpleicons.org/grammarly/15A362",
+      "SCRIBD": "https://cdn.simpleicons.org/scribd/1A7BBA",
+      "QUILLBOT": "https://dummyimage.com/128x128/2d7044/ffffff.png&text=QB",
+      "MICROSOFT 365": "https://cdn.simpleicons.org/microsoftoffice/D83B01",
+      "DUOLINGO SUPER": "https://cdn.simpleicons.org/duolingo/58CC02",
+      "CAMSCANNER": "https://dummyimage.com/128x128/1c5f74/ffffff.png&text=CS",
+      "MATHWAY": "https://dummyimage.com/128x128/3558a3/ffffff.png&text=MW",
+      "NOTABILITY": "https://dummyimage.com/128x128/c08b2a/ffffff.png&text=NB",
+      "GOODNOTES": "https://dummyimage.com/128x128/2d64c3/ffffff.png&text=GN",
+      "GEMINI AI": "https://cdn.simpleicons.org/googlegemini/8E75FF",
+      "BLACKBOX AI": "https://dummyimage.com/128x128/111111/ffffff.png&text=BB",
+      "PERPLEXITY AI": "https://cdn.simpleicons.org/perplexity/1FB8CD",
+      "CHATGPT+": "https://cdn.simpleicons.org/openai/10A37F",
+      "BOLT AI": "https://dummyimage.com/128x128/d27a17/ffffff.png&text=BT",
+      "PICSART": "https://cdn.simpleicons.org/picsart/C209C1",
+      "VSCO": "https://cdn.simpleicons.org/vsco/000000",
+      "ALIGHT MOTION": "https://dummyimage.com/128x128/1f7e62/ffffff.png&text=AM",
+      "LIGHTROOM": "https://cdn.simpleicons.org/adobelightroom/31A8FF",
+      "DAZZCAM IOS": "https://dummyimage.com/128x128/8a2e2e/ffffff.png&text=DZ",
+      "POLLAR": "https://dummyimage.com/128x128/b04170/ffffff.png&text=PL",
+      "CAPCUT": "https://cdn.simpleicons.org/capcut/000000",
+      "SPOTIFY": "https://cdn.simpleicons.org/spotify/1DB954"
+    };
+
+    const categories = [
+      {
+        name: "STREAMING",
+        emoji: "🎬",
+        desc: "semua aplikasi streaming jadi satu kategori",
+        apps: [
+          {
+            name: "NETFLIX",
+            subtitle: "premium streaming",
+            sections: [
+              { title: "sharing 1P1U", items: [["1 hari","6k"],["3 hari","10k"],["7 hari","15k"],["1 bulan","42k"],["2 bulan","80k"],["3 bulan","112k"]] },
+              { title: "sharing 1P2U", items: [["1 bulan","24k"],["2 bulan","42k"],["3 bulan","72k"]] },
+              { title: "semi private", items: [["1 bulan","40k"]] },
+              { title: "private", items: [["1 bulan","160k"]] }
+            ],
+            notes: ["📎 bill indo +2k"]
+          },
+          {
+            name: "WETV",
+            subtitle: "streaming",
+            sections: [
+              { title: "sharing", items: [["1 bulan (6u)","16k"],["3 bulan (3u)","23k"]] },
+              { title: "private", items: [["1 bulan","38k"]] }
+            ]
+          },
+          {
+            name: "IQIYI",
+            subtitle: "streaming",
+            sections: [
+              { title: "sharing", items: [["1 bulan","18k"],["3 bulan","22k"],["1 tahun","30k"]] },
+              { title: "private", items: [["1 bulan","33k"]] }
+            ]
+          },
+          {
+            name: "AMAZON PRIME",
+            subtitle: "streaming",
+            sections: [
+              { title: "sharing", items: [["1 hari","6k"],["3 hari","8k"],["7 hari","12k"],["1 bulan (4u)","18k"],["1 bulan (2u)","20k"]] },
+              { title: "private", items: [["1 bulan","22k"]] }
+            ]
+          },
+          {
+            name: "VIU",
+            subtitle: "streaming",
+            sections: [
+              { title: "private biasa", items: [["1 bulan","8k"],["2 bulan","12k"],["3 bulan","17k"],["6 bulan","25k"],["1 tahun","32k"]] },
+              { title: "private anti limit", items: [["1 hari","2k"],["3 hari","3k"],["7 hari","5k"],["1 bulan","12k"],["2 bulan","15k"],["3 bulan","22k"],["6 bulan","35k"],["1 tahun","44k"]] }
+            ]
+          },
+          {
+            name: "YOUTUBE",
+            subtitle: "inc yt music",
+            sections: [
+              { title: "famplan", items: [["1 bulan","7,5k"],["2 bulan","13k"]] },
+              { title: "indplan", items: [["1 bulan","14k"],["3 bulan","35k"]] },
+              { title: "mixplan", items: [["2 bulan","16k"],["3 bulan","20k"]] }
+            ],
+            notes: ["📎 note : akun seller +2.5k"]
+          },
+          {
+            name: "DISNEY+",
+            subtitle: "streaming",
+            sections: [
+              { title: "plan basic 1 bulan", items: [["3 user","45k"],["2 user","55k"],["private","85k"]] },
+              { title: "plan premium 1 bulan", items: [["10 user","26k"],["6 user","35k"],["3 user","55k (anlim)"]] },
+              { title: "plan prem harian", items: [["1 hari","8k"],["3 hari","15k"],["7 hari","23k"]] }
+            ]
+          },
+          {
+            name: "BSTATION",
+            subtitle: "streaming",
+            sections: [
+              { title: "sharing", items: [["1 bulan","15k"],["3 bulan","22k"],["1 tahun","30k"]] },
+              { title: "private", items: [["1 bulan","40k"]] }
+            ]
+          },
+          {
+            name: "YOUKU",
+            subtitle: "streaming",
+            sections: [
+              { title: "sharing", items: [["1 bulan","15k"],["3 bulan","25k"],["1 tahun","32k"]] },
+              { title: "private", items: [["1 bulan","35k"]] }
+            ]
+          },
+          {
+            name: "HBO MAX",
+            subtitle: "streaming",
+            sections: [
+              { title: "sharing plan standar", items: [["1 bulan 8 (u)","25k"],["1 bulan 5 (u)","37k"]] },
+              { title: "sharing plan ultimate", items: [["1 bulan","30k"]] },
+              { title: "private standar", items: [["1 bulan","90k"]] }
+            ]
+          },
+          {
+            name: "IFLIX",
+            subtitle: "streaming",
+            sections: [
+              { title: "sharing", items: [["1 bulan","10k"],["3 bulan","17k"],["1 tahun","28k"]] }
+            ]
+          },
+          {
+            name: "MOVIE BOX",
+            subtitle: "streaming",
+            sections: [
+              { title: "andro sharing", items: [["1 bulan","17k"],["3 bulan","23k"]] }
+            ]
+          },
+          {
+            name: "VISION+",
+            subtitle: "sport streaming",
+            sections: [
+              { title: "sharing", items: [["1 bulan sport no ads","15.000"]] },
+              { title: "private", items: [["1 bulan sport no ada","22.000"]] }
+            ]
+          },
+          {
+            name: "CATCHPLAY+",
+            subtitle: "streaming",
+            sections: [
+              { title: "sharing", items: [["1 bulan","17k"],["3 bulan","22k"],["1 tahun","30k"]] }
+            ]
+          },
+          {
+            name: "GAGAOOLALA",
+            subtitle: "streaming",
+            sections: [
+              { title: "sharing", items: [["1 bulan","16k"]] }
+            ]
+          },
+          {
+            name: "LOKLOK",
+            subtitle: "streaming",
+            sections: [
+              { title: "sharing", items: [["1 bulan (basic)","23k"],["1 bulan (standar)","26k"]] },
+              { title: "private", items: [["1 bulan (basic)","70k"],["1 bulan (standar)","80k"]] }
+            ]
+          },
+          {
+            name: "VIKI PASS",
+            subtitle: "streaming",
+            sections: [
+              { title: "sharing", items: [["7 hari","18k"],["1 bulan","30k"]] },
+              { title: "private", items: [["7 hari","25k"],["1 bulan","87k"]] }
+            ]
+          },
+          {
+            name: "RCTI+",
+            subtitle: "sport streaming",
+            sections: [
+              { title: "sharing", items: [["1 bulan sport","25k"]] },
+              { title: "private", items: [["1 bulan sport","35k"]] }
+            ]
+          }
+        ]
+      },
+      {
+        name: "EDUKASI",
+        emoji: "📚",
+        desc: "aplikasi belajar, office, note, meeting",
+        apps: [
+          {
+            name: "CANVA",
+            subtitle: "design & edukasi",
+            sections: [
+              { title: "pricelist", items: [["1 hari","2k"],["3 hari","4k"],["7 hari","6k"],["1 bulan","9k"],["3 bulan","13k"],["6 bulan","20k"],["1 tahun","33k (full garansi)"],["lifetime","26k"],["designer","+2k"]] }
+            ],
+            notes: ["📎 note : full garansi. lifetime garansi 6 bulan."]
+          },
+          {
+            name: "ZOOM",
+            subtitle: "meeting",
+            sections: [
+              { title: "pricelist", items: [["7 hari","20k"],["14 hari","30k"],["1 bulan","60k"]] }
+            ],
+            notes: ["📎 note : full garansi"]
+          },
+          {
+            name: "GRAMMARLY",
+            subtitle: "writing",
+            sections: [
+              { title: "sharing", items: [["1 bulan","20k"]] },
+              { title: "private", items: [["1 bulan","40k"]] }
+            ],
+            notes: ["📎 note : full garansi"]
+          },
+          {
+            name: "SCRIBD",
+            subtitle: "ebook & dokumen",
+            sections: [
+              { title: "sharing", items: [["1 bulan","9k"],["2 bulan","16k"]] },
+              { title: "private", items: [["1 bulan","15k"],["2 bulan","22k"]] }
+            ],
+            notes: ["📎 note : full garansi"]
+          },
+          {
+            name: "QUILLBOT",
+            subtitle: "writing tool",
+            sections: [
+              { title: "sharing", items: [["1 bulan","25k"]] },
+              { title: "private", items: [["1 bulan","45k"]] }
+            ],
+            notes: ["📎 note : full garansi"]
+          },
+          {
+            name: "MICROSOFT 365",
+            subtitle: "office",
+            sections: [
+              { title: "pricelist", items: [["1 bulan","15k"],["2 bulan","22k"],["3 bulan","28k"],["> sistem invite & pakai email customer",""]] }
+            ],
+            notes: ["📎 note : full garansi"]
+          },
+          {
+            name: "DUOLINGO SUPER",
+            subtitle: "bahasa",
+            sections: [
+              { title: "private", items: [["1 bulan","15k"]] }
+            ],
+            notes: ["📎 note :\n— bisa akun sendiri, yang nantinya link bakal aku kirim dan cust join sendiri\n— full garansi"]
+          },
+          {
+            name: "CAMSCANNER",
+            subtitle: "scan dokumen",
+            sections: [
+              { title: "sharing", items: [["1 tahun","35k"]] }
+            ],
+            notes: ["📎 note : garansi 6 bulan"]
+          },
+          {
+            name: "MATHWAY",
+            subtitle: "math helper",
+            sections: [
+              { title: "sharing", items: [["1 tahun","27k"]] }
+            ],
+            notes: ["📎 note : garansi 6 bulan"]
+          },
+          {
+            name: "NOTABILITY",
+            subtitle: "note app",
+            sections: [
+              { title: "sharing", items: [["1 tahun","25k"]] }
+            ],
+            notes: ["📎 note : full garansi"]
+          },
+          {
+            name: "GOODNOTES",
+            subtitle: "note app",
+            sections: [
+              { title: "pricelist", items: [["lifetime","25k"]] }
+            ]
+          }
+        ]
+      },
+      {
+        name: "AI",
+        emoji: "🤖",
+        desc: "semua tools AI dalam satu kategori",
+        apps: [
+          {
+            name: "GEMINI AI",
+            subtitle: "AI tool",
+            sections: [{ title: "private", items: [["1 bulan","39k"]] }]
+          },
+          {
+            name: "BLACKBOX AI",
+            subtitle: "AI tool",
+            sections: [{ title: "private", items: [["1 bulan","57k"]] }]
+          },
+          {
+            name: "PERPLEXITY AI",
+            subtitle: "AI search",
+            sections: [
+              { title: "sharing", items: [["1 bulan","34k"]] },
+              { title: "private", items: [["1 bulan","56k"],["1 tahun","69k"]] }
+            ]
+          },
+          {
+            name: "CHATGPT+",
+            subtitle: "AI premium",
+            sections: [
+              { title: "sharing", items: [["1 minggu","27k"],["1 bulan (10u)","35k"],["1 bulan (8u)","37k"]] }
+            ]
+          },
+          {
+            name: "BOLT AI",
+            subtitle: "AI tool",
+            sections: [{ title: "private", items: [["1 bulan","36k"]] }]
+          }
+        ]
+      },
+      {
+        name: "EDITING",
+        emoji: "🎞️",
+        desc: "foto & video editing",
+        apps: [
+          {
+            name: "PICSART",
+            subtitle: "editing",
+            sections: [
+              { title: "sharing", items: [["1 bulan","15k"]] },
+              { title: "private", items: [["1 bulan","25k"]] }
+            ]
+          },
+          {
+            name: "VSCO",
+            subtitle: "editing",
+            sections: [{ title: "pricelist", items: [["pro ios 1 tahun","33k"],["plus andro 1 tahun","12k"]] }]
+          },
+          {
+            name: "ALIGHT MOTION",
+            subtitle: "motion editing",
+            sections: [
+              { title: "sharing", items: [["1 bulan","15k"],["1 tahun","30k"]] },
+              { title: "private", items: [["1 bulan","22k"],["1 tahun","38k"]] }
+            ]
+          },
+          {
+            name: "LIGHTROOM",
+            subtitle: "andro & ios",
+            sections: [{ title: "sharing", items: [["1 tahun","25k"]] }]
+          },
+          {
+            name: "DAZZCAM IOS",
+            subtitle: "ios camera app",
+            sections: [{ title: "pricelist", items: [["lifetime","30k"]] }]
+          },
+          {
+            name: "POLLAR",
+            subtitle: "andro & ios",
+            sections: [{ title: "sharing", items: [["1 tahun","18k"]] }]
+          },
+          {
+            name: "CAPCUT",
+            subtitle: "video editing",
+            sections: [
+              { title: "sharing", items: [["7 hari (3u)","8k"],["1 bulan (3u)","18k"],["1 bulan (2u)","20k"]] },
+              { title: "private", items: [["1 hari","7k"],["2 hari","8k"],["3 hari","10k"],["1 minggu","13k"],["1 bulan","28k (gar 7d)"],["1 bulan","33k (full gar)"]] }
+            ]
+          }
+        ]
+      },
+      {
+        name: "MUSIC",
+        emoji: "🎵",
+        desc: "aplikasi music premium",
+        apps: [
+          {
+            name: "SPOTIFY",
+            subtitle: "music premium",
+            sections: [
+              { title: "famplan", items: [["1 bulan","22k"],["2 bulan","35k"]] },
+              { title: "indplan", items: [["1 bulan","26k"],["2 bulan","42k"]] }
+            ]
+          }
+        ]
+      }
+    ];
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function getInitials(name) {
+      const words = name.replace(/[^A-Za-z0-9+ ]/g, "").trim().split(/\s+/).filter(Boolean);
+      if (!words.length) return "AP";
+      if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+
+    function buildWhatsAppLink(appName) {
+      const message = `Halo Ann Store.id 🤎
+Aku mau order : ${appName}
+Paket : ...
+Durasi : ...`;
+      return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+    }
+
+    function renderPriceList(items) {
+      return `
+        <ul class="price-list">
+          ${items.map(([left, right]) => `
+            <li>
+              <span>${escapeHtml(left)}</span>
+              <span>${escapeHtml(right || "")}</span>
+            </li>
+          `).join("")}
+        </ul>
+      `;
+    }
+
+    function renderLogo(name) {
+      const src = logoMap[name] || "";
+      const initials = getInitials(name);
+      if (!src) {
+        return `<div class="app-logo fallback">${escapeHtml(initials)}</div>`;
+      }
+      return `
+        <div class="app-logo">
+          <img
+            src="${src}"
+            alt="${escapeHtml(name)} logo"
+            loading="lazy"
+            onerror="this.parentElement.classList.add('fallback'); this.remove(); this.parentElement.textContent='${escapeHtml(initials)}';"
+          >
+        </div>
+      `;
+    }
+
+    function renderApp(app) {
+      const notes = [...(app.notes || []), EXTRA_NOTE];
+      return `
+        <article class="app-card" data-app-name="${escapeHtml(app.name.toLowerCase())}">
+          <div class="app-head">
+            <div class="app-left">
+              ${renderLogo(app.name)}
+              <div class="app-title">
+                <h4>${escapeHtml(app.name)}</h4>
+                <p>${escapeHtml(app.subtitle || "premium app")}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-body">
+            <div class="app-body-inner">
+              ${(app.sections || []).map(section => `
+                <div class="section">${escapeHtml(section.title)}</div>
+                ${renderPriceList(section.items || [])}
+              `).join("")}
+
+              ${notes.map(note => `<div class="note">${escapeHtml(note)}</div>`).join("")}
+
+              <a class="order-btn" href="${buildWhatsAppLink(app.name)}" target="_blank" rel="noopener noreferrer">
+                💚 Order via WhatsApp
+              </a>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderCategory(category, index) {
+      return `
+        <section class="category-card ${index === 0 ? "active" : ""}">
+          <div class="category-head">
+            <div class="category-left">
+              <div class="category-icon">${category.emoji}</div>
+              <div>
+                <h3>${escapeHtml(category.name)}</h3>
+                <p>${escapeHtml(category.desc)} • ${category.apps.length} aplikasi</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="category-body">
+            <div class="category-body-inner">
+              <div class="apps-grid">
+                ${category.apps.map(renderApp).join("")}
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    const catalogEl = document.getElementById("catalog");
+    catalogEl.innerHTML = categories.map(renderCategory).join("");
+
+    const categoryCards = document.querySelectorAll(".category-card");
+
+    categoryCards.forEach((categoryCard) => {
+      const categoryHead = categoryCard.querySelector(".category-head");
+      const appCards = categoryCard.querySelectorAll(".app-card");
+
+      categoryHead.addEventListener("click", () => {
+        const active = categoryCard.classList.contains("active");
+        categoryCards.forEach(card => card.classList.remove("active"));
+        if (!active) categoryCard.classList.add("active");
+      });
+
+      appCards.forEach((appCard) => {
+        const appHead = appCard.querySelector(".app-head");
+
+        appHead.addEventListener("click", () => {
+          const isActive = appCard.classList.contains("active");
+
+          appCards.forEach(card => {
+            if (card !== appCard) card.classList.remove("active");
+          });
+
+          if (isActive) {
+            appCard.classList.remove("active");
+          } else {
+            appCard.classList.add("active");
+          }
+        });
+      });
+    });
+
+    const searchInput = document.getElementById("searchInput");
+    searchInput.addEventListener("input", function () {
+      const keyword = this.value.trim().toLowerCase();
+      const categoryCards = document.querySelectorAll(".category-card");
+
+      categoryCards.forEach(categoryCard => {
+        const apps = categoryCard.querySelectorAll(".app-card");
+        let visibleCount = 0;
+
+        apps.forEach(app => {
+          const name = app.dataset.appName || "";
+          const matched = !keyword || name.includes(keyword);
+
+          app.classList.toggle("hidden-by-search", !matched);
+          if (!matched) app.classList.remove("active");
+          if (matched) visibleCount++;
+        });
+
+        if (keyword && visibleCount > 0) {
+          categoryCard.classList.add("active");
+        }
+
+        if (visibleCount === 0) {
+          categoryCard.classList.add("hidden-by-search");
+        } else {
+          categoryCard.classList.remove("hidden-by-search");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
